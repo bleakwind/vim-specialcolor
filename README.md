@@ -1,7 +1,7 @@
 # vim-specialcolor
 
 ## Specialized highlighting for matched tags, CSS colors...
-Vim-Specialcolor is a Vim plugin that provides two main features:
+vim-specialcolor is a Vim plugin that provides two main features:
 1. HTML/XML tag matching highlighting
 2. CSS color code highlighting with actual color display
 
