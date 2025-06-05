@@ -320,7 +320,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:term_color = specialcolor#CsscolorHexterm(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorCheckfg(l:bg_color)
+                    let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
                     execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'White' ? '15' : '0')
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
@@ -354,7 +354,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:bg_color = specialcolor#CsscolorRgbfix(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorCheckfg(l:bg_color)
+                    let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
                     execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
@@ -387,7 +387,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:bg_color = specialcolor#CsscolorRgbafix(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorCheckfg(l:bg_color)
+                    let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
                     execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
@@ -399,9 +399,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorCheckfg
+    " specialcolor#CsscolorCalcfg
     " --------------------------------------------------
-    function! specialcolor#CsscolorCheckfg(hex) abort
+    function! specialcolor#CsscolorCalcfg(hex) abort
         let l:r = str2nr(a:hex[1:2], 16)
         let l:g = str2nr(a:hex[3:4], 16)
         let l:b = str2nr(a:hex[5:6], 16)
