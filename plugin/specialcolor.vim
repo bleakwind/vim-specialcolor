@@ -317,7 +317,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
 
                 if !empty(l:bg_color)
                     let l:fg_color = specialcolor#CsscolorCheckfg(l:bg_color)
-                    execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'white' ? '15' : '0')
+                    execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'White' ? '15' : '0')
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
                 endif
@@ -372,7 +372,6 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         for il in l:conlist
             let l:lnum += 1
             let l:lcol = 0
-
             while 1
                 let l:find_str = matchstrpos(il, 'rgba(\s*\d\+\%(\s*,\s*\d\+\)\{3\}\s*)', l:lcol)
                 if l:find_str[1] == -1 | break | endif
@@ -399,14 +398,11 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " specialcolor#CsscolorCheckfg
     " --------------------------------------------------
     function! specialcolor#CsscolorCheckfg(hex) abort
-        " convert HEX to RGB
         let l:r = str2nr(a:hex[1:2], 16)
         let l:g = str2nr(a:hex[3:4], 16)
         let l:b = str2nr(a:hex[5:6], 16)
-        " calcd brightness
         let l:brightness = (0.299 * l:r + 0.587 * l:g + 0.114 * l:b) / 255
-        " check foreground color
-        return l:brightness > 0.5 ? 'black' : 'white'
+        return l:brightness > 0.5 ? 'Black' : 'White'
     endfunction
 
     " --------------------------------------------------
