@@ -261,11 +261,15 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " specialcolor#CsscolorSetcolor
     " --------------------------------------------------
     function! specialcolor#CsscolorSetcolor() abort
-        if g:specialcolor_csscolor_timer != -1
-            call timer_stop(g:specialcolor_csscolor_timer)
-            let g:specialcolor_csscolor_timer = -1
+        let l:bufnr = bufnr('%')
+        let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") == ""')
+        if index(l:buflist, l:bufnr) != -1
+            if g:specialcolor_csscolor_timer != -1
+                call timer_stop(g:specialcolor_csscolor_timer)
+                let g:specialcolor_csscolor_timer = -1
+            endif
+            let g:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> execute('call specialcolor#CsscolorSetcon()', '')})
         endif
-        let g:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> execute('call specialcolor#CsscolorSetcon()', '')})
     endfunction
 
     " --------------------------------------------------
