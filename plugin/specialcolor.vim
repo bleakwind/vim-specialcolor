@@ -30,8 +30,8 @@ let g:specialcolor_matchtag_updelay     = get(g:, 'specialcolor_matchtag_updelay
 let g:specialcolor_matchtag_filetype    = get(g:, 'specialcolor_matchtag_filetype', ['htm', 'html', 'xml', 'xhtml', 'vue', 'jsx', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact'])
 let g:specialcolor_matchtag_selftag     = get(g:, 'specialcolor_matchtag_selftag', ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'])
 
-let g:specialcolor_matchtag_hlname      = 'SpecialcolorMatchtag'
 let g:specialcolor_matchtag_matchid     = []
+let g:specialcolor_matchtag_hlname      = 'SpecialcolorMatchtag'
 let g:specialcolor_matchtag_timer       = -1
 
 if !hlexists('SpecialcolorMatchtag') | highlight default link SpecialcolorMatchtag MatchParen | endif
@@ -246,7 +246,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
     augroup SpecialcolorCmdMatchtag
         autocmd!
         autocmd CursorMoved,CursorMovedI * call specialcolor#MatchtagSetHltag()
-        autocmd BufEnter * call specialcolor#MatchtagClearHltag()
+        autocmd BufLeave * call specialcolor#MatchtagClearHltag()
     augroup END
 
 endif
