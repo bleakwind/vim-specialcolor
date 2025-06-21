@@ -66,7 +66,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
     " specialcolor#MatchtagSetHlcon
     " --------------------------------------------------
     function! specialcolor#MatchtagSetHlcon() abort
-        if index(g:specialcolor_matchtag_filetype, &filetype) != -1 && mode() !=# 'i'
+        if index(g:specialcolor_matchtag_filetype, &filetype) != -1
             let [l:tag_name, l:tag_type, l:tag_pos] = specialcolor#MatchtagGetCursortag()
             if !empty(l:tag_name)
                 if empty(g:specialcolor_matchtag_matchid) || !exists('s:last_tag') || s:last_tag != [l:tag_name, l:tag_type, l:tag_pos]
@@ -245,7 +245,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
     " --------------------------------------------------
     augroup SpecialcolorCmdMatchtag
         autocmd!
-        autocmd CursorMoved,CursorMovedI * call specialcolor#MatchtagSetHltag()
+        autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI * call specialcolor#MatchtagSetHltag()
         autocmd BufLeave * call specialcolor#MatchtagClearHltag()
     augroup END
 
