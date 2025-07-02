@@ -261,9 +261,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " specialcolor#CsscolorSetcolor
     " --------------------------------------------------
     function! specialcolor#CsscolorSetcolor() abort
-        let l:bufnr = bufnr('%')
+        let l:bufnbr = bufnr('%')
         let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") == ""')
-        if index(l:buflist, l:bufnr) != -1
+        if index(l:buflist, l:bufnbr) != -1
             if g:specialcolor_csscolor_timer != -1
                 call timer_stop(g:specialcolor_csscolor_timer)
                 let g:specialcolor_csscolor_timer = -1
