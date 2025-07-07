@@ -26,7 +26,8 @@ set cpoptions&vim
 " 01: specialcolor_matchtag setting
 " ============================================================================
 let g:specialcolor_matchtag_enabled     = get(g:, 'specialcolor_matchtag_enabled', 0)
-let g:specialcolor_matchtag_updelay     = get(g:, 'specialcolor_matchtag_updelay', 200)
+let g:specialcolor_matchtag_range       = get(g:, 'specialcolor_matchtag_range', 100)
+let g:specialcolor_matchtag_updelay     = get(g:, 'specialcolor_matchtag_updelay', 100)
 let g:specialcolor_matchtag_filetype    = get(g:, 'specialcolor_matchtag_filetype', ['htm', 'html', 'xml', 'xhtml', 'vue', 'jsx', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact'])
 let g:specialcolor_matchtag_selftag     = get(g:, 'specialcolor_matchtag_selftag', ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'])
 
@@ -40,7 +41,8 @@ if !hlexists('SpecialcolorMatchtag') | highlight default link SpecialcolorMatcht
 " 02: specialcolor_csscolor setting
 " ============================================================================
 let g:specialcolor_csscolor_enabled     = get(g:, 'specialcolor_csscolor_enabled', 0)
-let g:specialcolor_csscolor_updelay     = get(g:, 'specialcolor_csscolor_updelay', 1000)
+let g:specialcolor_csscolor_range       = get(g:, 'specialcolor_csscolor_range', 100)
+let g:specialcolor_csscolor_updelay     = get(g:, 'specialcolor_csscolor_updelay', 200)
 
 let g:specialcolor_csscolor_matchid     = []
 let g:specialcolor_csscolor_timer       = -1
@@ -154,7 +156,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
         let [l:lnum, l:lcol, _] = a:closepos
         let l:line_res = 1
         let l:line_cur = l:lnum
-        let l:line_min = max([1, l:lnum - 100])
+        let l:line_min = max([1, l:lnum - g:specialcolor_matchtag_range])
 
         " find before tag_close
         let l:find_pos = [l:lnum, l:lcol - 1]
@@ -200,7 +202,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
         let [l:lnum, l:lcol, _] = a:openpos
         let l:line_res = 1
         let l:line_cur = l:lnum
-        let l:line_max = min([line('$'), l:lnum + 100])
+        let l:line_max = min([line('$'), l:lnum + g:specialcolor_matchtag_range])
 
         " find after tag_open
         let l:find_pos = [l:lnum, l:lcol + 1]
@@ -279,9 +281,13 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         " clear color
         call specialcolor#CsscolorClearcolor()
         " set color
-        call specialcolor#CsscolorSetHex()
-        call specialcolor#CsscolorSetrgb()
-        call specialcolor#CsscolorSetrgba()
+        let l:curr_line = line('.')
+        let l:start_line = max([1, l:curr_line - g:specialcolor_csscolor_range])
+        let l:end_line = min([line('$'), l:curr_line + g:specialcolor_csscolor_range])
+
+        call specialcolor#CsscolorSetHex(l:start_line, l:end_line)
+        call specialcolor#CsscolorSetrgb(l:start_line, l:end_line)
+        call specialcolor#CsscolorSetrgba(l:start_line, l:end_line)
     endfunction
 
     " --------------------------------------------------
@@ -297,10 +303,10 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     " specialcolor#CsscolorSetHex
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetHex() abort
+    function! specialcolor#CsscolorSetHex(start_line, end_line) abort
         let l:currpos = getpos('.')
-        let l:conlist = getline(1, '$')
-        let l:lnum = 0
+        let l:conlist = getline(a:start_line, a:end_line)
+        let l:lnum = a:start_line - 1
 
         for il in l:conlist
             let l:lnum += 1
@@ -334,10 +340,10 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     " specialcolor#CsscolorSetrgb
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetrgb() abort
+    function! specialcolor#CsscolorSetrgb(start_line, end_line) abort
         let l:currpos = getpos('.')
-        let l:conlist = getline(1, '$')
-        let l:lnum = 0
+        let l:conlist = getline(a:start_line, a:end_line)
+        let l:lnum = a:start_line - 1
 
         for il in l:conlist
             let l:lnum += 1
@@ -368,10 +374,10 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     " specialcolor#CsscolorSetrgba
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetrgba() abort
+    function! specialcolor#CsscolorSetrgba(start_line, end_line) abort
         let l:currpos = getpos('.')
-        let l:conlist = getline(1, '$')
-        let l:lnum = 0
+        let l:conlist = getline(a:start_line, a:end_line)
+        let l:lnum = a:start_line - 1
 
         for il in l:conlist
             let l:lnum += 1
@@ -473,6 +479,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     augroup SpecialcolorCmdCsscolor
         autocmd!
+        autocmd CursorMoved,CursorMovedI * call specialcolor#CsscolorSetcolor()
         autocmd BufWritePost * call specialcolor#CsscolorSetcolor()
         autocmd BufEnter * call specialcolor#CsscolorSetcolor()
     augroup END
