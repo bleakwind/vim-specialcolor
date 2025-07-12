@@ -243,9 +243,9 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
     endfunction
 
     " --------------------------------------------------
-    " SpecialcolorCmdMatchtag
+    " specialcolor_cmd_matchtag_bas
     " --------------------------------------------------
-    augroup SpecialcolorCmdMatchtag
+    augroup specialcolor_cmd_matchtag_bas
         autocmd!
         autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI * call specialcolor#MatchtagSetHltag()
         autocmd BufLeave * call specialcolor#MatchtagClearHltag()
@@ -475,9 +475,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " SpecialcolorCmdCsscolor
+    " specialcolor_cmd_csscolor_bas
     " --------------------------------------------------
-    augroup SpecialcolorCmdCsscolor
+    augroup specialcolor_cmd_csscolor_bas
         autocmd!
         autocmd CursorMoved,CursorMovedI * call specialcolor#CsscolorSetcolor()
         autocmd BufWritePost * call specialcolor#CsscolorSetcolor()
