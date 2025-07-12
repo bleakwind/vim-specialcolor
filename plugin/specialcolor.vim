@@ -35,7 +35,7 @@ let g:specialcolor_matchtag_matchid     = []
 let g:specialcolor_matchtag_hlname      = 'SpecialcolorMatchtag'
 let g:specialcolor_matchtag_timer       = -1
 
-if !hlexists('SpecialcolorMatchtag') | highlight default link SpecialcolorMatchtag MatchParen | endif
+if !hlexists('SpecialcolorMatchtag') | hi default link SpecialcolorMatchtag MatchParen | endif
 
 " ============================================================================
 " 02: specialcolor_csscolor setting
@@ -327,7 +327,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
 
                 if !empty(l:bg_color)
                     let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
-                    execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'White' ? '15' : '0')
+                    execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'White' ? '15' : '0')
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
                 endif
@@ -361,7 +361,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
 
                 if !empty(l:bg_color)
                     let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
-                    execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
+                    execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
                 endif
@@ -394,7 +394,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
 
                 if !empty(l:bg_color)
                     let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
-                    execute 'highlight '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
+                    execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
                 endif
