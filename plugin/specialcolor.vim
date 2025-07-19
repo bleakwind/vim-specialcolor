@@ -260,9 +260,9 @@ endif
 if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled == 1
 
     " --------------------------------------------------
-    " specialcolor#CsscolorSetcolor
+    " specialcolor#CsscolorSetColor
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetcolor() abort
+    function! specialcolor#CsscolorSetColor() abort
         let l:bufnbr = bufnr('%')
         let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") == ""')
         if index(l:buflist, l:bufnbr) != -1
@@ -270,30 +270,30 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 call timer_stop(g:specialcolor_csscolor_timer)
                 let g:specialcolor_csscolor_timer = -1
             endif
-            let g:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> execute('call specialcolor#CsscolorSetcon()', '')})
+            let g:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> execute('call specialcolor#CsscolorSetCon()', '')})
         endif
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorSetcon
+    " specialcolor#CsscolorSetCon
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetcon() abort
+    function! specialcolor#CsscolorSetCon() abort
         " clear color
-        call specialcolor#CsscolorClearcolor()
+        call specialcolor#CsscolorClearColor()
         " set color
         let l:curr_line = line('.')
         let l:start_line = max([1, l:curr_line - g:specialcolor_csscolor_range])
         let l:end_line = min([line('$'), l:curr_line + g:specialcolor_csscolor_range])
 
         call specialcolor#CsscolorSetHex(l:start_line, l:end_line)
-        call specialcolor#CsscolorSetrgb(l:start_line, l:end_line)
-        call specialcolor#CsscolorSetrgba(l:start_line, l:end_line)
+        call specialcolor#CsscolorSetRgb(l:start_line, l:end_line)
+        call specialcolor#CsscolorSetRgba(l:start_line, l:end_line)
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorClearcolor
+    " specialcolor#CsscolorClearColor
     " --------------------------------------------------
-    function! specialcolor#CsscolorClearcolor() abort
+    function! specialcolor#CsscolorClearColor() abort
         for il in g:specialcolor_csscolor_matchid
             silent! call matchdelete(il)
         endfor
@@ -322,11 +322,11 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
 
                 " create highlight
                 let l:hl_group = 'SpecialColorHex_'.l:lnum.'_'.l:start
-                let l:bg_color = specialcolor#CsscolorHexfix(l:code)
-                let l:term_color = specialcolor#CsscolorHexterm(l:code)
+                let l:bg_color = specialcolor#CsscolorHexFix(l:code)
+                let l:term_color = specialcolor#CsscolorHexTerm(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
+                    let l:fg_color = specialcolor#CsscolorCalcFg(l:bg_color)
                     execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'White' ? '15' : '0')
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
@@ -338,9 +338,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorSetrgb
+    " specialcolor#CsscolorSetRgb
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetrgb(start_line, end_line) abort
+    function! specialcolor#CsscolorSetRgb(start_line, end_line) abort
         let l:currpos = getpos('.')
         let l:conlist = getline(a:start_line, a:end_line)
         let l:lnum = a:start_line - 1
@@ -357,10 +357,10 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:lcol = l:finish
 
                 let l:hl_group = 'SpecialColorRGB_'.l:lnum.'_'.l:start
-                let l:bg_color = specialcolor#CsscolorRgbfix(l:code)
+                let l:bg_color = specialcolor#CsscolorRgbFix(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
+                    let l:fg_color = specialcolor#CsscolorCalcFg(l:bg_color)
                     execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
@@ -372,9 +372,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorSetrgba
+    " specialcolor#CsscolorSetRgba
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetrgba(start_line, end_line) abort
+    function! specialcolor#CsscolorSetRgba(start_line, end_line) abort
         let l:currpos = getpos('.')
         let l:conlist = getline(a:start_line, a:end_line)
         let l:lnum = a:start_line - 1
@@ -390,10 +390,10 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:lcol = l:finish
 
                 let l:hl_group = 'SpecialColorRGBA_'.l:lnum.'_'.l:start
-                let l:bg_color = specialcolor#CsscolorRgbafix(l:code)
+                let l:bg_color = specialcolor#CsscolorRgbaFix(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorCalcfg(l:bg_color)
+                    let l:fg_color = specialcolor#CsscolorCalcFg(l:bg_color)
                     execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(g:specialcolor_csscolor_matchid, l:match_id)
@@ -405,9 +405,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorCalcfg
+    " specialcolor#CsscolorCalcFg
     " --------------------------------------------------
-    function! specialcolor#CsscolorCalcfg(hex) abort
+    function! specialcolor#CsscolorCalcFg(hex) abort
         let l:r = str2nr(a:hex[1:2], 16)
         let l:g = str2nr(a:hex[3:4], 16)
         let l:b = str2nr(a:hex[5:6], 16)
@@ -416,9 +416,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorHexfix
+    " specialcolor#CsscolorHexFix
     " --------------------------------------------------
-    function! specialcolor#CsscolorHexfix(hex) abort
+    function! specialcolor#CsscolorHexFix(hex) abort
         if a:hex =~? '^#[0-9a-f]\{3}$'
             let l:r = repeat(a:hex[1], 2)
             let l:g = repeat(a:hex[2], 2)
@@ -431,11 +431,11 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorHexterm
+    " specialcolor#CsscolorHexTerm
     " --------------------------------------------------
-    function! specialcolor#CsscolorHexterm(hex) abort
+    function! specialcolor#CsscolorHexTerm(hex) abort
         if a:hex =~? '^#[0-9a-f]\{3}$'
-            let l:color_hex = specialcolor#CsscolorHexfix(a:hex)
+            let l:color_hex = specialcolor#CsscolorHexFix(a:hex)
         else
             let l:color_hex = a:hex
         endif
@@ -449,9 +449,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorRgbfix
+    " specialcolor#CsscolorRgbFix
     " --------------------------------------------------
-    function! specialcolor#CsscolorRgbfix(rgb) abort
+    function! specialcolor#CsscolorRgbFix(rgb) abort
         let l:color_rgb = matchstr(a:rgb, 'rgb(\zs.*\ze)')
         let l:color_split = split(l:color_rgb, '\s*,\s*')
         if len(l:color_split) != 3 | return '' | endif
@@ -462,9 +462,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#CsscolorRgbafix
+    " specialcolor#CsscolorRgbaFix
     " --------------------------------------------------
-    function! specialcolor#CsscolorRgbafix(rgba) abort
+    function! specialcolor#CsscolorRgbaFix(rgba) abort
         let l:color_rgba = matchstr(a:rgba, 'rgba(\zs.*\ze)')
         let l:color_split = split(l:color_rgba, '\s*,\s*')
         if len(l:color_split) != 4 | return '' | endif
@@ -479,9 +479,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     augroup specialcolor_cmd_csscolor_bas
         autocmd!
-        autocmd CursorMoved,CursorMovedI * call specialcolor#CsscolorSetcolor()
-        autocmd BufWritePost * call specialcolor#CsscolorSetcolor()
-        autocmd BufEnter * call specialcolor#CsscolorSetcolor()
+        autocmd CursorMoved,CursorMovedI * call specialcolor#CsscolorSetColor()
+        autocmd BufWritePost * call specialcolor#CsscolorSetColor()
+        autocmd BufEnter * call specialcolor#CsscolorSetColor()
     augroup END
 
 endif
