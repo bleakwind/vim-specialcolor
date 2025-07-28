@@ -37,23 +37,32 @@ And Run:
 
 ## Configuration
 Add these to your `.vimrc`:
+
+specialcolor_matchtag
 ```vim
 " Set 1 enable matchtag highlight (default: 0)
 let g:specialcolor_matchtag_enabled = 1
-" Set matchtag trigger delay in milliseconds (default: 200)
-let g:specialcolor_matchtag_updelay = 200
+" Search range for color preview (default: 100 lines)
+let g:specialcolor_matchtag_range = 100
+" Set matchtag trigger delay in milliseconds (default: 100)
+let g:specialcolor_matchtag_updelay = 100
+```
+
+specialcolor_csscolor
+```vim
 " Set 1 enable csscolor highlight (default: 0)
 let g:specialcolor_csscolor_enabled = 1
-" Set csscolor trigger delay in milliseconds (default: 1000)
-let g:specialcolor_csscolor_updelay = 1000
+" Search range for color preview (default: 100 lines)
+let g:specialcolor_csscolor_range = 100
+" Set csscolor trigger delay in milliseconds (default: 200)
+let g:specialcolor_csscolor_updelay = 200
 ```
 
 Highlight configuration
 ```vim
 " Set matchtag highlight details
-hi SpecialcolorMatchtag ctermfg=Black ctermbg=Cyan cterm=NONE guifg=#000000 guibg=#FF939C gui=NONE
+hi SpecialcolorMatchtag ctermfg=Black ctermbg=Red cterm=NONE guifg=#000000 guibg=#FF939C gui=NONE
 ```
 
 ## License
 BSD 2-Clause - See LICENSE file
-
