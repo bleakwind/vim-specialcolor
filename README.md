@@ -19,7 +19,7 @@ vim-specialcolor is a Vim plugin that provides two main features:
     - Automatically adjusts text color for readability (black or white) based on background color
 
 ## Screenshot
-![Viewmap Screenshot](https://github.com/bleakwind/vim-specialcolor/blob/main/vim-specialcolor.png)
+![Specialcolor Screenshot](https://github.com/bleakwind/vim-specialcolor/blob/main/vim-specialcolor.png)
 
 ## Requirements
 Recommended Vim 8.1+
