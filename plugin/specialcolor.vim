@@ -55,7 +55,7 @@ let s:specialcolor_csscolor_timer       = -1
 " 01: specialcolor_matchtag detail
 " g:specialcolor_matchtag_enabled = 1
 " ============================================================================
-if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled == 1
+if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled ==# 1
 
     " --------------------------------------------------
     " specialcolor#MatchtagSetHltag
@@ -106,7 +106,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
         let l:conlist = getline(l:lnum)
         let l:context = l:conlist[l:start_col-1 : l:finish_col-1]
 
-        if l:context[1] == '/'
+        if l:context[1] ==# '/'
             let l:hl_text = '</'.matchstr(l:context, '^<\/\zs[^ >]\+>\ze')
             let l:hl_start = stridx(l:context, l:hl_text)
             let l:hl_len = len(l:hl_text) - 1
@@ -140,7 +140,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
         let l:colpos = col('.')
 
         let l:open_pos = strridx(l:conlist[:l:colpos-1], '<')
-        if l:open_pos == -1 | return ['', '', []] | endif
+        if l:open_pos ==# -1 | return ['', '', []] | endif
 
         let l:close_pos = stridx(l:conlist[l:open_pos:], '>') + l:open_pos
         if l:close_pos <= l:open_pos | return ['', '', []] | endif
@@ -149,7 +149,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
         let l:tag_name = matchstr(l:tag_str, '^<\/\?\zs[^ >/]\+\ze')
         if empty(l:tag_name) | return ['', '', []] | endif
 
-        let l:tag_type = l:tag_str[1] == '/' ? 'close' : 'open'
+        let l:tag_type = l:tag_str[1] ==# '/' ? 'close' : 'open'
         return [l:tag_name, l:tag_type, [line('.'), l:open_pos + 1, l:close_pos + 1]]
     endfunction
 
@@ -167,7 +167,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
 
         while l:line_cur >= l:line_min
             let l:conlist = getline(l:line_cur)
-            let l:start = (l:line_cur == l:lnum) ? l:lcol - 1 : len(l:conlist) - 1
+            let l:start = (l:line_cur ==# l:lnum) ? l:lcol - 1 : len(l:conlist) - 1
 
             while l:start >= 0
                 " find tag_close
@@ -181,7 +181,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
                 let l:tag_open = matchstr(l:conlist[:l:start], '<'.a:tagname.'\>')
                 if !empty(l:tag_open)
                     let l:line_res -= 1
-                    if l:line_res == 0
+                    if l:line_res ==# 0
                         " find match tag_open
                         let l:open_pos = strridx(l:conlist[:l:start], l:tag_open)
                         return [l:line_cur, l:open_pos + 1, l:open_pos + len(l:tag_open) + 1]
@@ -213,7 +213,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
 
         while l:line_cur <= l:line_max
             let l:conlist = getline(l:line_cur)
-            let l:start = (l:line_cur == l:lnum) ? l:lcol : 0
+            let l:start = (l:line_cur ==# l:lnum) ? l:lcol : 0
 
             while l:start < len(l:conlist)
                 " find tag_open
@@ -227,7 +227,7 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
                 let l:tag_close = matchstr(l:conlist[l:start:], '</'.a:tagname.'\>')
                 if !empty(l:tag_close)
                     let l:line_res -= 1
-                    if l:line_res == 0
+                    if l:line_res ==# 0
                         " find match tag_close
                         let l:close_pos = l:start + stridx(l:conlist[l:start:], l:tag_close)
                         return [l:line_cur, l:close_pos + 1, l:close_pos + len(l:tag_close) + 1]
@@ -261,14 +261,14 @@ endif
 " 02: specialcolor_csscolor detail
 " g:specialcolor_csscolor_enabled = 1
 " ============================================================================
-if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled == 1
+if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled ==# 1
 
     " --------------------------------------------------
     " specialcolor#CsscolorSetColor
     " --------------------------------------------------
     function! specialcolor#CsscolorSetColor() abort
         let l:bufnbr = bufnr('%')
-        let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") == ""')
+        let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") ==# ""')
         if index(l:buflist, l:bufnbr) != -1
             if s:specialcolor_csscolor_timer != -1
                 call timer_stop(s:specialcolor_csscolor_timer)
@@ -322,7 +322,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
             while 1
                 " find [#RGB|#RRGGBB]
                 let l:find_str = matchstrpos(il, '#[0-9a-fA-F]\{3\}\>\|#[0-9a-fA-F]\{6\}\>', l:lcol)
-                if l:find_str[1] == -1 | break | endif
+                if l:find_str[1] ==# -1 | break | endif
 
                 let [l:code, l:start, l:finish] = l:find_str
                 let l:lcol = l:finish
@@ -333,8 +333,8 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:term_color = specialcolor#CsscolorHexTerm(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorColorBgtype(l:bg_color) == 'Black' ? 'White' : 'Black'
-                    execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'White' ? '15' : '0')
+                    let l:fg_color = specialcolor#CsscolorColorBgtype(l:bg_color) ==# 'Black' ? 'White' : 'Black'
+                    execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color ==# 'White' ? '15' : '0')
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(s:specialcolor_csscolor_matchid, l:match_id)
                 endif
@@ -342,7 +342,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         endfor
 
         " restore env
-        call setpos('.', l:orig_cursor)
+        keepjumps call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
@@ -361,7 +361,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
 
             while 1
                 let l:find_str = matchstrpos(il, 'rgb(\s*\d\+\%(\s*,\s*\d\+\)\{2\}\s*)', l:lcol)
-                if l:find_str[1] == -1 | break | endif
+                if l:find_str[1] ==# -1 | break | endif
 
                 let [l:code, l:start, l:finish] = l:find_str
                 let l:lcol = l:finish
@@ -370,7 +370,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:bg_color = specialcolor#CsscolorRgbFix(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorColorBgtype(l:bg_color) == 'Black' ? 'White' : 'Black'
+                    let l:fg_color = specialcolor#CsscolorColorBgtype(l:bg_color) ==# 'Black' ? 'White' : 'Black'
                     execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(s:specialcolor_csscolor_matchid, l:match_id)
@@ -379,7 +379,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         endfor
 
         " restore env
-        call setpos('.', l:orig_cursor)
+        keepjumps call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
@@ -397,7 +397,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
             let l:lcol = 0
             while 1
                 let l:find_str = matchstrpos(il, 'rgba(\s*\d\+\%(\s*,\s*\d\+\)\{3\}\s*)', l:lcol)
-                if l:find_str[1] == -1 | break | endif
+                if l:find_str[1] ==# -1 | break | endif
 
                 let [l:code, l:start, l:finish] = l:find_str
                 let l:lcol = l:finish
@@ -406,7 +406,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 let l:bg_color = specialcolor#CsscolorRgbaFix(l:code)
 
                 if !empty(l:bg_color)
-                    let l:fg_color = specialcolor#CsscolorColorBgtype(l:bg_color) == 'Black' ? 'White' : 'Black'
+                    let l:fg_color = specialcolor#CsscolorColorBgtype(l:bg_color) ==# 'Black' ? 'White' : 'Black'
                     execute 'hi '.l:hl_group.' guibg='.l:bg_color.' guifg='.l:fg_color
                     let l:match_id = matchadd(l:hl_group, '\%'.l:lnum.'l\%'.(l:start+1).'c'.l:code)
                     call add(s:specialcolor_csscolor_matchid, l:match_id)
@@ -415,7 +415,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         endfor
 
         " restore env
-        call setpos('.', l:orig_cursor)
+        keepjumps call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
@@ -470,16 +470,16 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                     let l:start = 0
                     while 1
                         let l:match = matchstrpos(il, '\<' . l:name . '\>', l:start)
-                        if l:match[1] == -1 | break | endif
+                        if l:match[1] ==# -1 | break | endif
 
                         let [l:found, l:start_pos, l:end_pos] = l:match
                         let l:start = l:end_pos
 
                         let l:hl_group = 'SpecialColorName_'.l:lnum.'_'.(l:start_pos+1)
                         let l:term_color = specialcolor#CsscolorHexTerm(l:color)
-                        let l:fg_color = specialcolor#CsscolorColorBgtype(l:color) == 'Black' ? 'White' : 'Black'
+                        let l:fg_color = specialcolor#CsscolorColorBgtype(l:color) ==# 'Black' ? 'White' : 'Black'
 
-                        execute 'hi '.l:hl_group.' guibg='.l:color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color == 'White' ? '15' : '0')
+                        execute 'hi '.l:hl_group.' guibg='.l:color.' guifg='.l:fg_color.' ctermbg='.l:term_color.' ctermfg='.(l:fg_color ==# 'White' ? '15' : '0')
                         let l:match_id = matchaddpos(l:hl_group, [[l:lnum, l:start_pos+1, len(l:name)]])
                         call add(s:specialcolor_csscolor_matchid, l:match_id)
                     endwhile
@@ -488,7 +488,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         endfor
 
         " restore env
-        call setpos('.', l:orig_cursor)
+        keepjumps call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
