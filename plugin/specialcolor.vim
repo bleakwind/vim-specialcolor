@@ -285,14 +285,14 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         " clear color
         call specialcolor#CsscolorClearColor()
         " set color
-        let l:curr_line = line('.')
-        let l:start_line = max([1, l:curr_line - g:specialcolor_csscolor_range])
-        let l:end_line = min([line('$'), l:curr_line + g:specialcolor_csscolor_range])
+        let l:line_curr = line('.')
+        let l:line_min = max([1, l:line_curr - g:specialcolor_csscolor_range])
+        let l:line_max = min([line('$'), l:line_curr + g:specialcolor_csscolor_range])
 
-        call specialcolor#CsscolorSetHex(l:start_line, l:end_line)
-        call specialcolor#CsscolorSetRgb(l:start_line, l:end_line)
-        call specialcolor#CsscolorSetRgba(l:start_line, l:end_line)
-        call specialcolor#CsscolorSetName(l:start_line, l:end_line)
+        call specialcolor#CsscolorSetHex(l:line_min, l:line_max)
+        call specialcolor#CsscolorSetRgb(l:line_min, l:line_max)
+        call specialcolor#CsscolorSetRgba(l:line_min, l:line_max)
+        call specialcolor#CsscolorSetName(l:line_min, l:line_max)
     endfunction
 
     " --------------------------------------------------
@@ -308,10 +308,12 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     " specialcolor#CsscolorSetHex
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetHex(start_line, end_line) abort
-        let l:currpos = getpos('.')
-        let l:conlist = getline(a:start_line, a:end_line)
-        let l:lnum = a:start_line - 1
+    function! specialcolor#CsscolorSetHex(line_min, line_max) abort
+        " save env
+        let l:orig_cursor = getpos('.')
+
+        let l:conlist = getline(a:line_min, a:line_max)
+        let l:lnum = a:line_min - 1
 
         for il in l:conlist
             let l:lnum += 1
@@ -339,16 +341,19 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
             endwhile
         endfor
 
-        call setpos('.', l:currpos)
+        " restore env
+        call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
     " specialcolor#CsscolorSetRgb
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetRgb(start_line, end_line) abort
-        let l:currpos = getpos('.')
-        let l:conlist = getline(a:start_line, a:end_line)
-        let l:lnum = a:start_line - 1
+    function! specialcolor#CsscolorSetRgb(line_min, line_max) abort
+        " save env
+        let l:orig_cursor = getpos('.')
+
+        let l:conlist = getline(a:line_min, a:line_max)
+        let l:lnum = a:line_min - 1
 
         for il in l:conlist
             let l:lnum += 1
@@ -373,16 +378,19 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
             endwhile
         endfor
 
-        call setpos('.', l:currpos)
+        " restore env
+        call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
     " specialcolor#CsscolorSetRgba
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetRgba(start_line, end_line) abort
-        let l:currpos = getpos('.')
-        let l:conlist = getline(a:start_line, a:end_line)
-        let l:lnum = a:start_line - 1
+    function! specialcolor#CsscolorSetRgba(line_min, line_max) abort
+        " save env
+        let l:orig_cursor = getpos('.')
+
+        let l:conlist = getline(a:line_min, a:line_max)
+        let l:lnum = a:line_min - 1
 
         for il in l:conlist
             let l:lnum += 1
@@ -406,13 +414,14 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
             endwhile
         endfor
 
-        call setpos('.', l:currpos)
+        " restore env
+        call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
     " specialcolor#CsscolorSetName
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetName(start_line, end_line) abort
+    function! specialcolor#CsscolorSetName(line_min, line_max) abort
         " set color
         let l:color_defs = [
                 \ {'Red': '#ff0000'},
@@ -445,10 +454,14 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 \ {'Purple': '#800080'},
                 \ {'Violet': '#ee82ee'}
                 \ ]
+
+        " save env
+        let l:orig_cursor = getpos('.')
+
         " process
-        let l:currpos = getpos('.')
-        let l:conlist = getline(a:start_line, a:end_line)
-        let l:lnum = a:start_line - 1
+        let l:conlist = getline(a:line_min, a:line_max)
+        let l:lnum = a:line_min - 1
+
         " loop content
         for il in l:conlist
             let l:lnum += 1
@@ -473,7 +486,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                 endfor
             endfor
         endfor
-        call setpos('.', l:currpos)
+
+        " restore env
+        call setpos('.', l:orig_cursor)
     endfunction
 
     " --------------------------------------------------
