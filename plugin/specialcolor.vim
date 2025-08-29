@@ -58,50 +58,78 @@ let s:specialcolor_csscolor_timer       = -1
 if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled ==# 1
 
     " --------------------------------------------------
-    " specialcolor#MatchtagSetHltag
+    " specialcolor#MatchtagIsSpecial
     " --------------------------------------------------
-    function! specialcolor#MatchtagSetHltag() abort
-        if s:specialcolor_matchtag_timer != -1
-            call timer_stop(s:specialcolor_matchtag_timer)
-            let s:specialcolor_matchtag_timer = -1
+    function! specialcolor#MatchtagIsSpecial(...) abort
+        let l:ret = 0
+        if a:0 > 0
+            let l:buftype = getbufvar(a:1, '&buftype')
+            let l:ret = l:buftype != '' && l:buftype != 'help' ? 1 : 0
         endif
-        let s:specialcolor_matchtag_timer = timer_start(g:specialcolor_matchtag_updelay, {-> execute('call specialcolor#MatchtagSetHlcon()', '')})
+        return l:ret
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#MatchtagSetHlcon
+    " specialcolor#MatchtagSetColor
     " --------------------------------------------------
-    function! specialcolor#MatchtagSetHlcon() abort
-        if index(g:specialcolor_matchtag_filetype, &filetype) != -1
-            let [l:tag_name, l:tag_type, l:tag_pos] = specialcolor#MatchtagGetCursortag()
-            if !empty(l:tag_name)
-                if empty(s:specialcolor_matchtag_matchid) || !exists('s:last_tag') || s:last_tag != [l:tag_name, l:tag_type, l:tag_pos]
-                    let s:last_tag = [l:tag_name, l:tag_type, l:tag_pos]
-                    call specialcolor#MatchtagClearHltag()
-                    if index(g:specialcolor_matchtag_selftag, l:tag_name) != -1
-                        call specialcolor#MatchtagSetHlpostag(l:tag_pos)
-                    else
-                        if l:tag_type ==# 'open'
-                            let l:match_pos = specialcolor#MatchtagGetClosetag(l:tag_name, l:tag_pos)
-                        elseif l:tag_type ==# 'close'
-                            let l:match_pos = specialcolor#MatchtagGetOpentag(l:tag_name, l:tag_pos)
-                        endif
-                        if !empty(l:match_pos)
-                            call specialcolor#MatchtagSetHlpostag(l:tag_pos)
-                            call specialcolor#MatchtagSetHlpostag(l:match_pos)
+    function! specialcolor#MatchtagSetColor() abort
+        if !specialcolor#MatchtagIsSpecial(bufnr('%')) && index(['n', 'v', 'V', nr2char(22), 's', 'S', nr2char(19)], mode()) >= 0
+            if s:specialcolor_matchtag_timer != -1
+                call timer_stop(s:specialcolor_matchtag_timer)
+                let s:specialcolor_matchtag_timer = -1
+            endif
+            let s:specialcolor_matchtag_timer = timer_start(g:specialcolor_matchtag_updelay, {-> specialcolor#MatchtagSetCon()})
+        endif
+    endfunction
+
+    " --------------------------------------------------
+    " specialcolor#MatchtagSetCon
+    " --------------------------------------------------
+    function! specialcolor#MatchtagSetCon() abort
+        if !specialcolor#MatchtagIsSpecial(bufnr('%')) && index(['n', 'v', 'V', nr2char(22), 's', 'S', nr2char(19)], mode()) >= 0
+            if index(g:specialcolor_matchtag_filetype, &filetype) != -1
+                let [l:tag_name, l:tag_type, l:tag_pos] = specialcolor#MatchtagGetCursortag()
+                if !empty(l:tag_name)
+                    if empty(s:specialcolor_matchtag_matchid) || !exists('s:last_tag') || s:last_tag != [l:tag_name, l:tag_type, l:tag_pos]
+                        let s:last_tag = [l:tag_name, l:tag_type, l:tag_pos]
+                        call specialcolor#MatchtagClearTag()
+                        if index(g:specialcolor_matchtag_selftag, l:tag_name) != -1
+                            call specialcolor#MatchtagSetPostag(l:tag_pos)
+                        else
+                            if l:tag_type ==# 'open'
+                                let l:match_pos = specialcolor#MatchtagGetClosetag(l:tag_name, l:tag_pos)
+                            elseif l:tag_type ==# 'close'
+                                let l:match_pos = specialcolor#MatchtagGetOpentag(l:tag_name, l:tag_pos)
+                            endif
+                            if !empty(l:match_pos)
+                                call specialcolor#MatchtagSetPostag(l:tag_pos)
+                                call specialcolor#MatchtagSetPostag(l:match_pos)
+                            endif
                         endif
                     endif
+                else
+                    call specialcolor#MatchtagClearTag()
                 endif
-            else
-                call specialcolor#MatchtagClearHltag()
             endif
         endif
     endfunction
 
     " --------------------------------------------------
-    " specialcolor#MatchtagSetHlpostag
+    " specialcolor#MatchtagClearTag
     " --------------------------------------------------
-    function! specialcolor#MatchtagSetHlpostag(pos) abort
+    function! specialcolor#MatchtagClearTag() abort
+        if !specialcolor#MatchtagIsSpecial(bufnr('%')) && index(['n', 'v', 'V', nr2char(22), 's', 'S', nr2char(19)], mode()) >= 0
+            for il in s:specialcolor_matchtag_matchid
+                silent! call matchdelete(il)
+            endfor
+            let s:specialcolor_matchtag_matchid = []
+        endif
+    endfunction
+
+    " --------------------------------------------------
+    " specialcolor#MatchtagSetPostag
+    " --------------------------------------------------
+    function! specialcolor#MatchtagSetPostag(pos) abort
         let [l:lnum, l:start_col, l:finish_col] = a:pos
         let l:conlist = getline(l:lnum)
         let l:context = l:conlist[l:start_col-1 : l:finish_col-1]
@@ -120,16 +148,6 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
             let l:match_id = matchaddpos(s:specialcolor_matchtag_hlname, [[l:lnum, l:start_col + l:hl_start, l:hl_start + l:hl_len + 1]])
             call add(s:specialcolor_matchtag_matchid, l:match_id)
         endif
-    endfunction
-
-    " --------------------------------------------------
-    " specialcolor#MatchtagClearHltag
-    " --------------------------------------------------
-    function! specialcolor#MatchtagClearHltag() abort
-        for il in s:specialcolor_matchtag_matchid
-            silent! call matchdelete(il)
-        endfor
-        let s:specialcolor_matchtag_matchid = []
     endfunction
 
     " --------------------------------------------------
@@ -251,8 +269,8 @@ if exists('g:specialcolor_matchtag_enabled') && g:specialcolor_matchtag_enabled 
     " --------------------------------------------------
     augroup specialcolor_cmd_matchtag_bas
         autocmd!
-        autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI * call specialcolor#MatchtagSetHltag()
-        autocmd BufLeave * call specialcolor#MatchtagClearHltag()
+        autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI * call specialcolor#MatchtagSetColor()
+        autocmd BufLeave * call specialcolor#MatchtagClearTag()
     augroup END
 
 endif
@@ -264,17 +282,31 @@ endif
 if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled ==# 1
 
     " --------------------------------------------------
+    " specialcolor#CsscolorIsSpecial
+    " --------------------------------------------------
+    function! specialcolor#CsscolorIsSpecial(...) abort
+        let l:ret = 0
+        if a:0 > 0
+            let l:buftype = getbufvar(a:1, '&buftype')
+            let l:ret = l:buftype != '' && l:buftype != 'help' ? 1 : 0
+        endif
+        return l:ret
+    endfunction
+
+    " --------------------------------------------------
     " specialcolor#CsscolorSetColor
     " --------------------------------------------------
     function! specialcolor#CsscolorSetColor() abort
-        let l:bufnbr = bufnr('%')
-        let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") ==# ""')
-        if index(l:buflist, l:bufnbr) != -1
-            if s:specialcolor_csscolor_timer != -1
-                call timer_stop(s:specialcolor_csscolor_timer)
-                let s:specialcolor_csscolor_timer = -1
+        if !specialcolor#CsscolorIsSpecial(bufnr('%')) && index(['n', 'v', 'V', nr2char(22), 's', 'S', nr2char(19)], mode()) >= 0
+            let l:bufnbr = bufnr('%')
+            let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") ==# ""')
+            if index(l:buflist, l:bufnbr) != -1
+                if s:specialcolor_csscolor_timer != -1
+                    call timer_stop(s:specialcolor_csscolor_timer)
+                    let s:specialcolor_csscolor_timer = -1
+                endif
+                let s:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> specialcolor#CsscolorSetCon()})
             endif
-            let s:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> execute('call specialcolor#CsscolorSetCon()', '')})
         endif
     endfunction
 
@@ -282,27 +314,31 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " specialcolor#CsscolorSetCon
     " --------------------------------------------------
     function! specialcolor#CsscolorSetCon() abort
-        " clear color
-        call specialcolor#CsscolorClearColor()
-        " set color
-        let l:line_curr = line('.')
-        let l:line_min = max([1, l:line_curr - g:specialcolor_csscolor_range])
-        let l:line_max = min([line('$'), l:line_curr + g:specialcolor_csscolor_range])
+        if !specialcolor#CsscolorIsSpecial(bufnr('%')) && index(['n', 'v', 'V', nr2char(22), 's', 'S', nr2char(19)], mode()) >= 0
+            " clear color
+            call specialcolor#CsscolorClearColor()
+            " set color
+            let l:line_curr = line('.')
+            let l:line_min = max([1, l:line_curr - g:specialcolor_csscolor_range])
+            let l:line_max = min([line('$'), l:line_curr + g:specialcolor_csscolor_range])
 
-        call specialcolor#CsscolorSetHex(l:line_min, l:line_max)
-        call specialcolor#CsscolorSetRgb(l:line_min, l:line_max)
-        call specialcolor#CsscolorSetRgba(l:line_min, l:line_max)
-        call specialcolor#CsscolorSetName(l:line_min, l:line_max)
+            call specialcolor#CsscolorSetHex(l:line_min, l:line_max)
+            call specialcolor#CsscolorSetRgb(l:line_min, l:line_max)
+            call specialcolor#CsscolorSetRgba(l:line_min, l:line_max)
+            call specialcolor#CsscolorSetName(l:line_min, l:line_max)
+        endif
     endfunction
 
     " --------------------------------------------------
     " specialcolor#CsscolorClearColor
     " --------------------------------------------------
     function! specialcolor#CsscolorClearColor() abort
-        for il in s:specialcolor_csscolor_matchid
-            silent! call matchdelete(il)
-        endfor
-        let s:specialcolor_csscolor_matchid = []
+        if !specialcolor#CsscolorIsSpecial(bufnr('%')) && index(['n', 'v', 'V', nr2char(22), 's', 'S', nr2char(19)], mode()) >= 0
+            for il in s:specialcolor_csscolor_matchid
+                silent! call matchdelete(il)
+            endfor
+            let s:specialcolor_csscolor_matchid = []
+        endif
     endfunction
 
     " --------------------------------------------------
