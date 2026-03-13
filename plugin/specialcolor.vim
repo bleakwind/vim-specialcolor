@@ -1,7 +1,7 @@
 "  vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
 "
 "  +-------------------------------------------------------------------------+
-"  | $Id: specialcolor.vim 2026-03-13 18:05:22 Bleakwind Exp $               |
+"  | $Id: specialcolor.vim 2026-03-14 06:17:25 Bleakwind Exp $               |
 "  +-------------------------------------------------------------------------+
 "  | Copyright (c) 2008-2026 Bleakwind(Rick Wu).                             |
 "  +-------------------------------------------------------------------------+
@@ -342,6 +342,30 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     endfunction
 
     " --------------------------------------------------
+    " specialcolor#CsscolorColorMask
+    " --------------------------------------------------
+    function! specialcolor#CsscolorColorMask(color, alpha) abort
+        let l:get_color = a:color
+        let l:get_alpha = str2float(a:alpha)
+        if l:get_color =~? '^#[0-9a-fA-F]\{6}$' && l:get_alpha >= 0.0 && l:get_alpha <= 1.0
+            let l:r = str2nr(l:get_color[1:2], 16)
+            let l:g = str2nr(l:get_color[3:4], 16)
+            let l:b = str2nr(l:get_color[5:6], 16)
+
+            let l:mixed_r = float2nr(l:r * (1.0 - l:get_alpha) + 255 * l:get_alpha)
+            let l:mixed_g = float2nr(l:g * (1.0 - l:get_alpha) + 255 * l:get_alpha)
+            let l:mixed_b = float2nr(l:b * (1.0 - l:get_alpha) + 255 * l:get_alpha)
+
+            let l:mixed_r = max([0, min([255, l:mixed_r])])
+            let l:mixed_g = max([0, min([255, l:mixed_g])])
+            let l:mixed_b = max([0, min([255, l:mixed_b])])
+
+            let l:get_color = printf('#%02X%02X%02X', l:mixed_r, l:mixed_g, l:mixed_b)
+        endif
+        return l:get_color
+    endfunction
+
+    " --------------------------------------------------
     " specialcolor#CsscolorSetHex
     " --------------------------------------------------
     function! specialcolor#CsscolorSetHex(line_min, line_max) abort
@@ -431,8 +455,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         for il in l:conlist
             let l:lnum += 1
             let l:lcol = 0
+
             while 1
-                let l:find_str = matchstrpos(il, 'rgba(\s*\d\+\%(\s*,\s*\d\+\)\{3\}\s*)', l:lcol)
+                let l:find_str = matchstrpos(il, 'rgba(\s*\d\+\%(\s*,\s*\d\+\)\{2\}\s*,\s*\d*\.\?\d\+\s*)', l:lcol)
                 if l:find_str[1] ==# -1 | break | endif
 
                 let [l:code, l:start, l:finish] = l:find_str
@@ -571,7 +596,8 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         let l:r = float2nr(str2float(l:color_split[0]) * 255 / (l:color_split[0] =~ '%' ? 100.0 : 255.0))
         let l:g = float2nr(str2float(l:color_split[1]) * 255 / (l:color_split[1] =~ '%' ? 100.0 : 255.0))
         let l:b = float2nr(str2float(l:color_split[2]) * 255 / (l:color_split[2] =~ '%' ? 100.0 : 255.0))
-        return printf('#%02x%02x%02x', l:r, l:g, l:b)
+        let l:ret_color = printf('#%02x%02x%02x', l:r, l:g, l:b)
+        return l:ret_color
     endfunction
 
     " --------------------------------------------------
@@ -584,7 +610,8 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
         let l:r = float2nr(str2float(l:color_split[0]) * 255 / (l:color_split[0] =~ '%' ? 100.0 : 255.0))
         let l:g = float2nr(str2float(l:color_split[1]) * 255 / (l:color_split[1] =~ '%' ? 100.0 : 255.0))
         let l:b = float2nr(str2float(l:color_split[2]) * 255 / (l:color_split[2] =~ '%' ? 100.0 : 255.0))
-        return printf('#%02x%02x%02x', l:r, l:g, l:b)
+        let l:ret_color = specialcolor#CsscolorColorMask(printf('#%02x%02x%02x', l:r, l:g, l:b), l:color_split[3])
+        return l:ret_color
     endfunction
 
     " --------------------------------------------------
