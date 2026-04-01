@@ -1,7 +1,7 @@
 "  vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
 "
 "  +-------------------------------------------------------------------------+
-"  | $Id: specialcolor.vim 2026-03-14 06:17:25 Bleakwind Exp $               |
+"  | $Id: specialcolor.vim 2026-04-02 04:10:39 Bleakwind Exp $               |
 "  +-------------------------------------------------------------------------+
 "  | Copyright (c) 2008-2026 Bleakwind(Rick Wu).                             |
 "  +-------------------------------------------------------------------------+
@@ -296,7 +296,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     " specialcolor#CsscolorSetColor
     " --------------------------------------------------
-    function! specialcolor#CsscolorSetColor() abort
+    function! specialcolor#CsscolorSetColor(...) abort
         if !specialcolor#CsscolorIsSpecial(bufnr('%')) && index(['n', 'v', 'V', nr2char(22), 's', 'S', nr2char(19)], mode()) >= 0
             let l:bufnbr = bufnr('%')
             let l:buflist = filter(range(1, bufnr('$')), 'buflisted(v:val) && getbufvar(v:val, "&buftype") ==# ""')
@@ -305,7 +305,12 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
                     call timer_stop(s:specialcolor_csscolor_timer)
                     let s:specialcolor_csscolor_timer = -1
                 endif
-                let s:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> specialcolor#CsscolorSetCon()})
+                if exists('a:1') && a:1 ==# 1
+                    call specialcolor#CsscolorClearColor()
+                    let s:specialcolor_csscolor_timer = timer_start(0, {-> specialcolor#CsscolorSetCon()})
+                else
+                    let s:specialcolor_csscolor_timer = timer_start(g:specialcolor_csscolor_updelay, {-> specialcolor#CsscolorSetCon()})
+                endif
             endif
         endif
     endfunction
@@ -327,6 +332,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
             call specialcolor#CsscolorSetRgba(l:line_min, l:line_max)
             call specialcolor#CsscolorSetName(l:line_min, l:line_max)
         endif
+        let s:specialcolor_csscolor_timer = -1
     endfunction
 
     " --------------------------------------------------
@@ -630,9 +636,9 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     augroup specialcolor_cmd_csscolor_bas
         autocmd!
-        autocmd CursorMoved,CursorMovedI * call specialcolor#CsscolorSetColor()
-        autocmd BufWritePost * call specialcolor#CsscolorSetColor()
-        autocmd BufEnter * call specialcolor#CsscolorSetColor()
+        autocmd TextChanged,TextChangedI * call specialcolor#CsscolorSetColor()
+        autocmd BufWritePost * call specialcolor#CsscolorSetColor(1)
+        autocmd BufEnter * call specialcolor#CsscolorSetColor(1)
     augroup END
 
 endif
