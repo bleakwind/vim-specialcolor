@@ -1,7 +1,7 @@
 "  vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
 "
 "  +-------------------------------------------------------------------------+
-"  | $Id: specialcolor.vim 2026-04-02 04:10:39 Bleakwind Exp $               |
+"  | $Id: specialcolor.vim 2026-04-02 22:40:47 Bleakwind Exp $               |
 "  +-------------------------------------------------------------------------+
 "  | Copyright (c) 2008-2026 Bleakwind(Rick Wu).                             |
 "  +-------------------------------------------------------------------------+
@@ -636,7 +636,7 @@ if exists('g:specialcolor_csscolor_enabled') && g:specialcolor_csscolor_enabled 
     " --------------------------------------------------
     augroup specialcolor_cmd_csscolor_bas
         autocmd!
-        autocmd TextChanged,TextChangedI * call specialcolor#CsscolorSetColor()
+        autocmd CursorMoved,CursorMovedI * call specialcolor#CsscolorSetColor()
         autocmd BufWritePost * call specialcolor#CsscolorSetColor(1)
         autocmd BufEnter * call specialcolor#CsscolorSetColor(1)
     augroup END
