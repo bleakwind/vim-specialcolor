@@ -66,3 +66,4 @@ hi SpecialcolorMatchtag ctermfg=Black ctermbg=Red cterm=NONE guifg=#000000 guibg
 
 ## License
 BSD 2-Clause - See LICENSE file
+
